@@ -24,12 +24,6 @@ public class PointBean implements Serializable {
     private final List<PointDto> points = new ArrayList<>();
     private PointDto newPoint = new PointDto();
 
-    @PostConstruct
-    public void init() {
-        points.clear();
-        points.addAll(pointService.findAll());
-    }
-
     public void addPoint() {
         try {
             PointDto saved = pointService.addPoint(newPoint);
