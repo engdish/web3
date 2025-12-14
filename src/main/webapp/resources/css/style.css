@@ -1,0 +1,306 @@
+.header {
+    display: flex;
+    align-items: center;
+    gap: 130px;
+    max-width: 800px;
+    margin: 0 auto;
+    margin-top: 2%;
+    margin-bottom: 1%;
+    padding: 2%;
+    border: 0.5px solid;
+    border-radius: 12px;
+}
+
+.left_header {
+    flex: 4;
+    margin-bottom: 2%;
+    line-height: 1;
+    font-family: serif;
+}
+
+.a {
+    color: #4c835a;
+}
+
+.right_header {
+    flex: 3;
+    margin-top: 2%;
+    border-left: 1px solid black;
+    padding-left: 1.5%;
+    font-size: 18px;
+    line-height: 1.6;
+    font-family: serif;
+    color: #333;
+}
+
+.container {
+    display: flex;
+    align-items: flex-start;
+    gap: 2.5%;
+    max-width: 800px;
+    margin: 0 auto;
+    margin-bottom: 1%;
+    padding: 2%;
+    border: 0.5px solid;
+    border-radius: 12px;
+}
+
+.graph-block {
+    flex: 4;
+    line-height: 1;
+}
+
+.text-block {
+    flex: 3;
+    margin-top: 3%;
+    border-left: 1px solid black;
+    padding-left: 2%;
+    font-size: 18px;
+    line-height: 1.6;
+}
+
+.query {
+    font-family: serif;
+    font-size: 16px;
+    width: 150px !important;
+    height: 33px;
+    margin-top: 25px;
+    margin-left: 10px;
+    margin-right: center;
+    background-color: #b3dbbdb8;
+    border-radius: 3px;
+    border: 0.3px solid #707070ca;
+}
+
+.query2 {
+    width: 155px !important;
+}
+
+.query:hover {
+    background-color: #b3dbbd;
+    cursor: pointer;
+    border-radius: 3px;
+    border: 0.3px solid #707070ca;
+}
+
+#tableBlock {
+    align-items: center;
+    gap: 10px;
+    max-width: 800px;
+    margin: 0 auto;
+    margin-bottom: 1%;
+    padding: 2%;
+    border: 0.5px solid;
+    border-radius: 12px;
+}
+
+.tb_header {
+    margin-bottom: 30px;
+}
+
+table {
+    border: 1px solid grey;
+    border-collapse: collapse;
+    width: 100%;
+    table-layout: fixed;
+}
+
+table th {
+    border: 1px solid grey;
+    padding: 1%;
+    text-align: left;
+    background-color: #b3dbbd69;
+}
+
+table td {
+    border: 1px solid grey;
+    padding: 1%;
+    text-align: left;
+    font-weight: normal;
+}
+
+tbody {
+    font-weight: normal;
+}
+
+table td {
+    word-wrap: break-word;
+    padding: 1%;
+    border: 1px solid grey;
+    font-size: 14px;
+}
+
+.X .Y .R {
+    display: flex;
+    align-items: left;
+    gap: 5px;
+}
+
+.custom-input {
+    font-family: serif;
+    font-size: 18px;
+
+    height: 30px;
+    width: 100px;
+    padding: 0;
+    padding-left: 5px;
+    background-color: #ffffff2b;
+    border: 0.3px solid #fffefe00;
+    border-radius: 3px;
+    color: inherit;
+    box-sizing: border-box;
+}
+
+.custom-input:hover {
+    border: 0.3px solid #707070ca;
+    border-radius: 3px;
+}
+
+.custom-input:focus {
+    outline: none;
+    border: 0.3px solid #707070ca;
+    border-radius: 3px;
+}
+
+.customY {
+    font-family: serif;
+    font-size: 18px;
+    width: 32px;
+    display: inline-flex;
+    align-items: center;
+    padding: 0;
+    padding-left: 5px;
+    background-color: #ffffff2b;
+    border: 0.3px solid #fffefe00;
+    color: inherit;
+    box-sizing: border-box;
+}
+
+
+/* Контейнер слайдера */
+.ui-slider {
+    width: 170px;
+    height: 36px;
+    background-color: #b3dbbdb8;
+    border: 0.3px solid #707070ca;
+    border-radius: 3px;
+    padding-left: 10px;
+    display: inline-flex !important;
+    vertical-align: middle;
+    margin: 0 10px;
+    box-shadow: none !important;
+    position: relative;
+    background-image: none !important;
+}
+
+/* Полоска */
+.ui-slider-horizontal {
+    height: 20px !important;
+    width: 120px !important;
+    background-color: #b3dbbdb8 !important;
+    border-radius: 3px;
+    position: relative;
+}
+
+/* Активная часть линии */
+.ui-slider-range {
+    height: 100%;
+    background-color: #b3dbbd !important;
+    border-radius: 3px;
+}
+
+/* Ползунок */
+.ui-slider-handle,
+.ui-slider-handle-hover,
+.ui-slider-handle-focus,
+.ui-slider-handle.ui-state-hover,
+.ui-slider-handle.ui-state-active,
+.ui-slider-handle.ui-state-focus {
+    width: 10px !important;
+    height: 33px !important;
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+    margin-left: -10px !important;
+    outline: none !important;
+
+    background-color: #4c835a !important;
+    border: 0px solid #4c835a !important;
+    border-radius: 3px !important;
+    box-shadow: none !important;
+    cursor: pointer !important;
+    background-image: none !important;
+    transition: background-color 0.2s;
+}
+
+
+/* Основное поле спиннера */
+.custom-spinner .ui-spinner-input {
+    font-family: serif;
+    display: inline-flex;
+    align-items: center;
+    text-align: left;
+    height: 30px;
+    width: 70px;
+    padding: 0;
+    padding-left: 7px;
+    background-color: #ffffff2b;
+    border: 0px solid #fffefe00 !important;
+    border-radius: 3px;
+    color: inherit;
+    box-sizing: border-box;
+    box-shadow: none !important;
+    font-size: 18px;
+}
+
+.custom-spinner .ui-spinner-input:hover, .custom-spinner .ui-spinner-input:focus {
+    border: 0.3px solid #707070ca;
+    outline: none !important;
+}
+
+/* Контейнер спиннера */
+.custom-spinner {
+    display: inline-flex;
+    align-items: center;
+    width: 70px;
+}
+
+/* Кнопки */
+.custom-spinner .ui-spinner-button {
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 15px;
+    margin: 0;
+    cursor: pointer;
+    background-image: none !important;
+    box-shadow: none !important;
+    background-color: #ffffff2b;
+    border: 0px solid #707070ca;
+    border-radius: 3px;
+    user-select: none;
+    transition: background-color 0.2s;
+}
+
+.custom-spinner .ui-spinner-button:hover, .custom-spinner .ui-spinner-button:active {
+    box-shadow: none !important;
+    background-color: #b3dbbdb8;
+    transition: background-color 0.2s;
+    border: 0.3px solid #707070ca;
+}
+
+.clock-card {
+    margin: 0 auto;
+    padding: 2%;
+    border: 0.5px solid;
+    border-radius: 12px;
+    max-width: 320px;
+    text-align: center;
+    font-family: serif;
+    font-size: 20px;
+}
+
+.clock-card .ui-clock {
+    margin-top: 10px;
+    font-size: 22px;
+}

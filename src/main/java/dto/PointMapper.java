@@ -3,12 +3,13 @@ package dto;
 import model.Point;
 
 public final class PointMapper {
-
     private PointMapper() {
     }
 
     public static PointDto toDto(Point entity) {
-        if (entity == null) return null;
+        if (entity == null) {
+            return null;
+        }
         return new PointDto(
                 entity.getId(),
                 entity.getX(),
@@ -21,7 +22,9 @@ public final class PointMapper {
     }
 
     public static Point toEntity(PointDto dto) {
-        if (dto == null) return null;
+        if (dto == null) {
+            return null;
+        }
         return new Point(dto.getX(), dto.getY(), dto.getR());
     }
 }

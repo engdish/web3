@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+    <meta charset="utf-8" />
+    <title>Lab 03</title>
+    <h:outputStylesheet name="style.css" library="css" />
+</h:head>
+<h:body>
+    <header class="header">
+        <div class="left_header">
+            <h2>Лабораторная работа №3</h2>
+            <h:link value="Основная страница" outcome="game" class="a" />
+        </div>
+
+        <div class="right_header">
+            Коршун Артём Сергеевич
+            <br />
+            <strong>Группа:</strong> P3219<br /> <strong>Вариант:</strong> 59595
+        </div>
+    </header>
+
+    <div class="container">
+        Текущее время:
+        <p id="clock">Загрузка времени...</p>
+    </div>
+
+    <h:outputScript library="js" name="clock.js"/>
+</h:body>
+</html>

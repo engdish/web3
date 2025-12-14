@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html
+        xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:h="http://java.sun.com/jsf/html"
+        xmlns:f="http://java.sun.com/jsf/core"
+        xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+        xmlns:p="http://primefaces.org/ui"
+>
+<h:head>
+    <meta charset="utf-8" />
+    <title>Lab 03</title>
+    <h:outputStylesheet name="style.css" library="css" />
+</h:head>
+
+<h:body>
+    <header class="header">
+        <div class="left_header">
+            <h2>Лабораторная работа №3</h2>
+            <h:link value="Стартовая страница" outcome="welcome" class="a" />
+        </div>
+        <div class="right_header">
+            Коршун Артём Сергеевич
+            <br />
+            <strong>Группа:</strong> P3219<br /> <strong>Вариант:</strong> 59595
+        </div>
+    </header>
+
+    <h:form>
+        <div class="container">
+            <div class="graph-block">
+                <div class="R">
+                    <h:outputLabel value="Радиус R: " for="rInput" />
+
+                    <h:inputHidden id="rInput" value="#{pointBean.newPoint.r}">
+                            <f:validateLongRange minimum="1" maximum="5"/>
+                    </h:inputHidden>
+                    <h:commandLink value="1" onclick="setR(1); return false;" styleClass="query"/>
+                    <h:commandLink value="2" onclick="setR(2); return false;" styleClass="query"/>
+                    <h:commandLink value="3" onclick="setR(3); return false;" styleClass="query"/>
+                    <h:commandLink value="4" onclick="setR(4); return false;" styleClass="query"/>
+                    <h:commandLink value="5" onclick="setR(5); return false;" styleClass="query"/>
+                    <h:message for="rInput" />
+                </div>
+                <p:outputPanel id="canvasBlock">
+                    <br/>
+                    <canvas id="canvas" width="380" height="380" style="border: 0px solid #ccc" />
+                </p:outputPanel>
+            </div>
+            <div class="text-block">
+                <h3>Попади в область!</h3>
+                <div class="X">
+                    <h:outputLabel value="Координата X: " for="X"/>
+                    <h:selectOneMenu id="X"
+                                     value="#{pointBean.newPoint.x}"
+                                     styleClass="custom-input">
+                        <f:selectItem itemValue="-5" itemLabel="-5"/>
+                        <f:selectItem itemValue="-4" itemLabel="-4"/>
+                        <f:selectItem itemValue="-3" itemLabel="-3"/>
+                        <f:selectItem itemValue="-2" itemLabel="-2"/>
+                        <f:selectItem itemValue="-1" itemLabel="-1"/>
+                        <f:selectItem itemValue="0" itemLabel="0"/>
+                        <f:selectItem itemValue="1" itemLabel="1"/>
+                        <f:selectItem itemValue="2" itemLabel="2"/>
+                        <f:selectItem itemValue="3" itemLabel="3"/>
+                    </h:selectOneMenu>
+                    <h:message for="X" />
+                </div>
+                <div class="Y">
+                    <h:outputLabel value="Координата Y: " for="Y" />
+                    <h:inputText
+                            id="Y"
+                            value="#{pointBean.newPoint.y}"
+                            required="true"
+                            styleClass="custom-input">
+                            <f:convertNumber locale="en_US" />
+                        <f:validateDoubleRange minimum="-5" maximum="5"/>
+                    </h:inputText>
+                    <h:message for="Y" id="yMsg"/>
+                </div>
+                <h:commandButton id="query1"
+                                 action="#{pointBean.addPoint}"
+                                 value="Показать точку"
+                                 class="query">
+                    <f:ajax execute="X Y rInput" render=":tableBlock yMsg"/>
+                </h:commandButton>
+                <h:commandButton
+                        id="query2"
+                        action="#{pointBean.clearData}"
+                        value="Очистить данные"
+                        class="query query2"
+                >
+                    <f:ajax render=":tableBlock"/>
+                </h:commandButton>
+
+            </div>
+        </div>
+    </h:form>
+    <p:outputPanel id="tableBlock">
+        <h3 class="tb_header">История запросов</h3>
+        <table id="table">
+            <thead>
+            <tr>
+                <th style="width: 13%">Радиус R</th>
+                <th style="width: 13%">Коорд. X</th>
+                <th style="width: 13%">Коорд. Y</th>
+                <th style="width: 14%">Статус</th>
+                <th style="width: 22%">Дата и время</th>
+                <th style="width: 27%">Продолжительность обработки</th>
+            </tr>
+            </thead>
+            <tbody>
+            <ui:repeat value="#{pointBean.points}" var="point">
+                <tr>
+                    <td>#{point.r}</td>
+                    <td>#{point.x}</td>
+                    <td>#{point.y}</td>
+                    <td>#{point.result ? 'Попадание' : 'Промах'}</td>
+                    <td>#{point.date}</td>
+                    <td>#{point.nano} μs</td>
+                </tr>
+            </ui:repeat>
+            </tbody>
+        </table>
+    </p:outputPanel>
+    <script type="module" src="resources/js/script.js"></script>
+</h:body>
+</html>
