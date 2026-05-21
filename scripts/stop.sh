@@ -1,0 +1,1 @@
+/Users/temanekrasov/Downloads/wildfly-19.0.0.Final/bin/jboss-cli.sh --connect command=:shutdown

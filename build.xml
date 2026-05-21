@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="opi3" default="build" basedir=".">
+    <property environment="env"/>
+    <property file="build.properties" />
+
+    <path id="main.classpath">
+        <fileset dir="${lib.dir}" includes="*.jar"/>
+    </path>
+
+    <path id="test.classpath">
+        <path refid="main.classpath"/>
+        <pathelement location="${classes.dir}"/>
+        <pathelement location="${test.classes.dir}"/>
+    </path>
+
+
+    <target name="compile" description="Compile project">
+        <mkdir dir="${classes.dir}"/>
+
+        <javac srcdir="${src.main}"
+               destdir="${classes.dir}"
+               source="${javac.source}"
+               target="${javac.target}"
+               encoding="${encoding}"
+               includeantruntime="false">
+            <classpath refid="main.classpath"/>
+        </javac>
+    </target>
+
+    <target name="clean" description="Remove compiled classes">
+        <delete dir="${build.dir}"/>
+        <delete>
+            <fileset dir="." includes="**/*~"/>
+            <fileset dir="." includes="**/*.tmp"/>
+        </delete>
+    </target>
+
+    <target name="build" depends="compile" description="Build WAR archive">
+        <mkdir dir="${dist.dir}"/>
+
+        <copy todir="${classes.dir}" failonerror="false">
+            <fileset dir="${src.resources}" includes="**/*"/>
+        </copy>
+
+        <war destfile="${war.file}" webxml="${webxml.file}" manifest="${manifest.file}">
+            <fileset dir="${src.webapp}">
+                <exclude name="WEB-INF/web.xml"/>
+            </fileset>
+            <classes dir="${classes.dir}"/>
+            <lib dir="${lib.dir}">
+                <include name="primefaces-8.0.jar"/>
+            </lib>
+        </war>
+    </target>
+
+    <target name="del_build" description="Delete built WAR archive">
+        <delete file="${war.file}"/>
+    </target>
+
+    <target name="test" depends="build" description="Run JUnit tests">
+        <mkdir dir="${test.classes.dir}"/>
+        <mkdir dir="${test.report.dir}"/>
+
+        <javac srcdir="${src.test}"
+               destdir="${test.classes.dir}"
+               source="${javac.source}"
+               target="${javac.target}"
+               encoding="${encoding}"
+               includeantruntime="false">
+            <classpath refid="test.classpath"/>
+        </javac>
+
+        <junit printsummary="true" haltonfailure="true" fork="true">
+            <classpath refid="test.classpath"/>
+
+            <formatter type="plain" usefile="false"/>
+            <formatter type="xml"/>
+
+            <batchtest todir="${test.report.dir}">
+                <fileset dir="${src.test}">
+                    <include name="**/*Test.java"/>
+                </fileset>
+            </batchtest>
+        </junit>
+    </target>
+
+    <target name="music" depends="build" description="Play music after successful build">
+        <exec executable="afplay" failonerror="false">
+            <arg value="${music.file}"/>
+        </exec>
+    </target>
+
+    <target name="scp" depends="build" description="Copy WAR to remote server">
+        <exec executable="scp" failonerror="true">
+            <arg value="-P"/>
+            <arg value="${scp.port}"/>
+            <arg value="-i"/>
+            <arg value="${scp.keyfile}"/>
+            <arg value="${war.file}"/>
+            <arg value="${scp.user}@${scp.host}:${scp.remote.dir}"/>
+        </exec>
+    </target>
+
+    <target name="native2ascii" description="Convert localization copies to ASCII">
+        <mkdir dir="${tmp.dir}/i18n-ascii"/>
+
+        <copy todir="${tmp.dir}/i18n-source">
+            <fileset dir="${src.resources}/i18n" includes="*.properties"/>
+        </copy>
+
+        <native2ascii src="${tmp.dir}/i18n-source"
+                      dest="${tmp.dir}/i18n-ascii"
+                      encoding="${encoding}"
+                      includes="*.properties"/>
+    </target>
+
+    <target name="report" depends="test" description="Commit JUnit XML report to SVN">
+        <copy todir="${svn.report.path}" flatten="true">
+            <fileset dir="${test.report.dir}" includes="*.xml"/>
+        </copy>
+
+        <exec executable="svn" dir="${svn.report.path}" failonerror="true">
+            <arg value="add"/>
+            <arg value="--force"/>
+            <arg value="."/>
+        </exec>
+
+        <exec executable="svn" dir="${svn.report.path}" failonerror="true">
+            <arg value="commit"/>
+            <arg value="-m"/>
+            <arg value="${svn.message}"/>
+        </exec>
+    </target>
+
+    <target name="env" depends="build" description="Deploy and run WAR in alternative Java environment">
+        <mkdir dir="${env.deploy.dir}"/>
+        <copy file="${war.file}" todir="${env.deploy.dir}"/>
+
+        <exec executable="${env.server.home}/bin/standalone.sh" dir="${env.server.home}" spawn="true">
+            <env key="JAVA_HOME" value="${env.java.home}"/>
+            <env key="JAVA_OPTS" value="${env.jvm.args}"/>
+        </exec>
+    </target>
+
+    <target name="stop" description="Stop application server">
+        <exec executable="sh" failonerror="true">
+            <env key="JAVA_HOME" value="${env.java.home}"/>
+            <arg value="scripts/stop.sh"/>
+        </exec>
+    </target>
+
+    <target name="team" description="Build previous git revisions and pack WAR files">
+        <mkdir dir="${history.dir}/team"/>
+        <mkdir dir="${dist.dir}"/>
+
+        <exec executable="sh" failonerror="true">
+            <arg value="scripts/team.sh"/>
+            <arg value="${history.dir}"/>
+            <arg value="${team.revisions}"/>
+            <arg value="${war.file}"/>
+            <arg value="${project.name}"/>
+        </exec>
+
+        <zip destfile="${team.zip}">
+            <fileset dir="${history.dir}/team/wars" includes="*.war"/>
+        </zip>
+    </target>
+
+    <target name="history" description="Find last compilable git revision and save breaking diff">
+        <mkdir dir="${history.dir}"/>
+
+        <exec executable="sh" failonerror="true">
+            <arg value="scripts/history.sh"/>
+            <arg value="${history.dir}"/>
+            <arg value="${history.diff.file}"/>
+        </exec>
+    </target>
+
+    <target name="validate" depends="test" description="Lint with SonarQube">
+        <exec executable="${sonar.scanner.executable}" failonerror="true">
+            <arg value="-Dsonar.projectKey=${sonar.projectKey}"/>
+        <arg value="-Dsonar.projectName=${sonar.projectName}"/>
+        <arg value="-Dsonar.projectVersion=${project.version}"/>
+        <arg value="-Dsonar.host.url=${sonar.host.url}"/>
+        <arg value="-Dsonar.token=${sonar.token}"/>
+        <arg value="-Dsonar.sources=${src.main}"/>
+        <arg value="-Dsonar.tests=${src.test}"/>
+        <arg value="-Dsonar.java.binaries=${classes.dir}"/>
+        <arg value="-Dsonar.java.test.binaries=${test.classes.dir}"/>
+        <arg value="-Dsonar.junit.reportPaths=${test.report.dir}"/>
+        <arg value="-Dsonar.sourceEncoding=${encoding}"/>
+        </exec>
+    </target>
+
+</project>
