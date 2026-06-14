@@ -4,6 +4,7 @@ import dto.PointDto;
 import dto.PointMapper;
 import calculate.AreaChecker;
 import model.Point;
+import monitoring.MonitoringRegistry;
 import repository.CheckResultRepository;
 import util.DateTimeProvider;
 import util.Stopwatch;
@@ -38,6 +39,9 @@ public class PointService {
 
         boolean hit = areaChecker.isHit(entity.getX(), entity.getY(), entity.getR());
         entity.setResult(hit);
+
+        MonitoringRegistry.getStatistics().recordPoint(hit); // --------------------------------------------СМОТРЕТЬ
+        MonitoringRegistry.getHitRatio().recordPoint(hit);   // --------------------------------------------СЮДА
 
         entity.setDate(dateTimeProvider.now());
         entity.setNano(watch.elapsedMicros());
