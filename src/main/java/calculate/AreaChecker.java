@@ -22,10 +22,8 @@ public class AreaChecker {
             }
         }
 
-        if (x >= 0 && y <= 0) {
-            if (x <= r && y >= -r) {
-                return true;
-            }
+        if ((x >= 0 && y <= 0) && (x <= r && y >= -r)) {
+            return true;
         }
 
         return false;

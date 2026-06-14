@@ -179,17 +179,17 @@
     <target name="validate" depends="test" description="Lint with SonarQube">
         <exec executable="${sonar.scanner.executable}" failonerror="true">
             <arg value="-Dsonar.projectKey=${sonar.projectKey}"/>
-        <arg value="-Dsonar.projectName=${sonar.projectName}"/>
-        <arg value="-Dsonar.projectVersion=${project.version}"/>
-        <arg value="-Dsonar.host.url=${sonar.host.url}"/>
-        <arg value="-Dsonar.token=${sonar.token}"/>
-        <arg value="-Dsonar.sources=${src.main}"/>
-        <arg value="-Dsonar.tests=${src.test}"/>
-        <arg value="-Dsonar.java.binaries=${classes.dir}"/>
-        <arg value="-Dsonar.java.test.binaries=${test.classes.dir}"/>
-        <arg value="-Dsonar.junit.reportPaths=${test.report.dir}"/>
-        <arg value="-Dsonar.sourceEncoding=${encoding}"/>
-        </exec>
+            <arg value="-Dsonar.projectName=${sonar.projectName}"/>
+            <arg value="-Dsonar.projectVersion=${project.version}"/>
+            <arg value="-Dsonar.host.url=${sonar.host.url}"/>
+            <arg value="-Dsonar.token=${sonar.token}"/>
+            <arg value="-Dsonar.sources=${src.main}"/>
+            <arg value="-Dsonar.tests=${src.test}"/>
+            <arg value="-Dsonar.java.binaries=${classes.dir}"/>
+            <arg value="-Dsonar.java.test.binaries=${test.classes.dir}"/>
+            <arg value="-Dsonar.junit.reportPaths=${test.report.dir}"/>
+            <arg value="-Dsonar.sourceEncoding=${encoding}"/>
+            </exec>
     </target>
 
 </project>

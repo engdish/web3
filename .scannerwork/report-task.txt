@@ -2,5 +2,5 @@ projectKey=opi3
 serverUrl=http://localhost:9000
 serverVersion=26.5.0.122743
 dashboardUrl=http://localhost:9000/dashboard?id=opi3
-ceTaskId=5c400a3c-7d59-4fc4-a746-5d90d4477c14
-ceTaskUrl=http://localhost:9000/api/ce/task?id=5c400a3c-7d59-4fc4-a746-5d90d4477c14
+ceTaskId=6db9ae3b-749c-4588-9e1a-58371613a86e
+ceTaskUrl=http://localhost:9000/api/ce/task?id=6db9ae3b-749c-4588-9e1a-58371613a86e
