@@ -42,10 +42,10 @@ public class Main {
             ServletUnitClient sc = sr.newClient();
             int number = 1;
             WebRequest request = new GetMethodWebRequest("http://test.meterware.com/myServlet");
-            while (true) {
+            while (true) { //------------------------------ПРОБЛЕМА ТУТ----------------------
                 WebResponse response = sc.getResponse(request);
                 System.out.println("Count: " + number++ + response);
-                java.lang.Thread.sleep(200);
+                java.lang.Thread.sleep(200); //------------------------------ПРОБЛЕМА ТУТ----------------------
             }
         } catch (InterruptedException ex) {
             Logger.getLogger("global").log(Level.SEVERE, null, ex);
