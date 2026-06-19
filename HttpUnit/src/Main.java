@@ -40,15 +40,18 @@ public class Main {
             ServletRunner sr = new ServletRunner();
             sr.registerServlet("myServlet", HelloWorld.class.getName());
             ServletUnitClient sc = sr.newClient();
-            int number = 1;
+            int limit = 10000000;
             WebRequest request = new GetMethodWebRequest("http://test.meterware.com/myServlet");
-            while (true) { //------------------------------ПРОБЛЕМА ТУТ----------------------
+            for (int number = 1; number <= limit; number++) {
                 WebResponse response = sc.getResponse(request);
-                System.out.println("Count: " + number++ + response);
-                java.lang.Thread.sleep(200); //------------------------------ПРОБЛЕМА ТУТ----------------------
+                if (number % 100 == 0) {
+                    System.out.println("Count: " + number + response);
+                }
+                HttpUnitOptions.clearScriptErrorMessages();
+                //java.lang.Thread.sleep(2);
             }
-        } catch (InterruptedException ex) {
-            Logger.getLogger("global").log(Level.SEVERE, null, ex);
+        //} catch (InterruptedException ex) {
+        //    Logger.getLogger("global").log(Level.SEVERE, null, ex);
         } catch (MalformedURLException ex) {
             Logger.getLogger("global").log(Level.SEVERE, null, ex);
         } catch (IOException ex) {

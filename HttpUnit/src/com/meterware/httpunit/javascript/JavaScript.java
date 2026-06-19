@@ -46,6 +46,18 @@ public class JavaScript {
     private static ArrayList _errorMessages = new ArrayList();
 
 
+    private static boolean enterContextIfNeeded() {
+        if (Context.getCurrentContext() != null) return false;
+        Context.enter();
+        return true;
+    }
+
+
+    private static void exitContextIfNeeded( boolean enteredContext ) {
+        if (enteredContext) Context.exit();
+    }
+
+
     static boolean isThrowExceptionsOnError() {
         return _throwExceptionsOnError;
     }
@@ -72,7 +84,18 @@ public class JavaScript {
     static void run( WebResponse response ) throws IllegalAccessException, InstantiationException,
             InvocationTargetException, ClassDefinitionException, NotAFunctionException,
             PropertyException, SAXException, JavaScriptException {
-        Context context = Context.enter();
+        boolean enteredContext = enterContextIfNeeded();
+        try {
+            associate( response, Context.getCurrentContext() );
+        } finally {
+            exitContextIfNeeded( enteredContext );
+        }
+    }
+
+
+    private static void associate( WebResponse response, Context context ) throws IllegalAccessException,
+            InstantiationException, InvocationTargetException, ClassDefinitionException, NotAFunctionException,
+            PropertyException, SAXException, JavaScriptException {
         Scriptable scope = context.initStandardObjects( null );
         initHTMLObjects( scope );
 
@@ -85,8 +108,13 @@ public class JavaScript {
      * Runs the onload event for the specified web response.
      */
     public static void load( WebResponse response ) throws ClassDefinitionException, InstantiationException, IllegalAccessException, InvocationTargetException, PropertyException, JavaScriptException, SAXException, NotAFunctionException {
-        if (!(response.getScriptableObject().getScriptEngine() instanceof JavaScriptEngine)) run( response );
-        response.getScriptableObject().load();
+        boolean enteredContext = enterContextIfNeeded();
+        try {
+            if (!(response.getScriptableObject().getScriptEngine() instanceof JavaScriptEngine)) associate( response, Context.getCurrentContext() );
+            response.getScriptableObject().load();
+        } finally {
+            exitContextIfNeeded( enteredContext );
+        }
     }
 
 
@@ -123,6 +151,7 @@ public class JavaScript {
 
         public String executeScript( String language, String script ) {
             if (!supportsScriptLanguage( language )) return "";
+            boolean enteredContext = enterContextIfNeeded();
             try {
                 script = script.trim();
                 if (script.startsWith( "<!--" )) {
@@ -137,6 +166,7 @@ public class JavaScript {
                 return "";
             } finally {
                 discardDocumentWriteBuffer();
+                exitContextIfNeeded( enteredContext );
             }
         }
 
@@ -165,6 +195,7 @@ public class JavaScript {
 
 
         public boolean performEvent( String eventScript ) {
+            boolean enteredContext = enterContextIfNeeded();
             try {
                 final Context context = Context.getCurrentContext();
                 context.setOptimizationLevel( -1 );
@@ -174,6 +205,8 @@ public class JavaScript {
             } catch (Exception e) {
                 handleScriptException( e, "Event '" + eventScript + "'" );
                 return false;
+            } finally {
+                exitContextIfNeeded( enteredContext );
             }
         }
 
@@ -182,12 +215,15 @@ public class JavaScript {
          * Evaluates the specified string as JavaScript. Will return null if the script has no return value.
          */
         public String evaluateScriptExpression( String urlString ) {
+            boolean enteredContext = enterContextIfNeeded();
             try {
                 Object result = Context.getCurrentContext().evaluateString( this, urlString, "httpunit", 0, null );
                 return (result == null || result instanceof Undefined) ? null : result.toString();
             } catch (Exception e) {
                 handleScriptException( e, "URL '" + urlString + "'" );
                 return null;
+            } finally {
+                exitContextIfNeeded( enteredContext );
             }
         }
 
@@ -201,7 +237,9 @@ public class JavaScript {
                 e.printStackTrace();
                 throw new ScriptException( errorMessage );
             } else {
-                _errorMessages.add( errorMessage );
+                if (_errorMessages.size() < 100) {
+                    _errorMessages.add(errorMessage);
+                }
             }
         }
 
@@ -260,11 +298,16 @@ public class JavaScript {
 
 
         private Object toScriptable( ScriptableDelegate[] list ) {
-            Object[] delegates = new Object[ list.length ];
-            for (int i = 0; i < delegates.length; i++) {
-                delegates[i] = toScriptable( list[i] );
+            boolean enteredContext = enterContextIfNeeded();
+            try {
+                Object[] delegates = new Object[ list.length ];
+                for (int i = 0; i < delegates.length; i++) {
+                    delegates[i] = toScriptable( list[i] );
+                }
+                return Context.getCurrentContext().newArray( this, delegates );
+            } finally {
+                exitContextIfNeeded( enteredContext );
             }
-            return Context.getCurrentContext().newArray( this, delegates );
         }
 
 
@@ -305,20 +348,25 @@ public class JavaScript {
          * Converts a scriptable delegate obtained from a subobject into the appropriate Rhino-compatible Scriptable.
          **/
         final Object toScriptable( ScriptableDelegate delegate ) {
-            if (delegate == null) {
-                return NOT_FOUND;
-            } else if (delegate.getScriptEngine() instanceof Scriptable) {
-                return (Scriptable) delegate.getScriptEngine();
-            } else {
-                try {
-                    JavaScriptEngine element = (JavaScriptEngine) Context.getCurrentContext().newObject( this, getScriptableClassName( delegate ) );
-                    element.initialize( this, delegate );
-                    return element;
-                } catch (RuntimeException e) {
-                    throw e;
-                } catch (Exception e) {
-                    throw new RhinoException( e );
+            boolean enteredContext = enterContextIfNeeded();
+            try {
+                if (delegate == null) {
+                    return NOT_FOUND;
+                } else if (delegate.getScriptEngine() instanceof Scriptable) {
+                    return (Scriptable) delegate.getScriptEngine();
+                } else {
+                    try {
+                        JavaScriptEngine element = (JavaScriptEngine) Context.getCurrentContext().newObject( this, getScriptableClassName( delegate ) );
+                        element.initialize( this, delegate );
+                        return element;
+                    } catch (RuntimeException e) {
+                        throw e;
+                    } catch (Exception e) {
+                        throw new RhinoException( e );
+                    }
                 }
+            } finally {
+                exitContextIfNeeded( enteredContext );
             }
         }
 
@@ -339,13 +387,18 @@ public class JavaScript {
 
 
         protected ElementArray toElementArray( ScriptableDelegate[] scriptables ) {
-            JavaScriptEngine[] elements = new JavaScriptEngine[ scriptables.length ];
-            for (int i = 0; i < elements.length; i++) {
-                elements[ i ] = (JavaScriptEngine) toScriptable( scriptables[ i ] );
+            boolean enteredContext = enterContextIfNeeded();
+            try {
+                JavaScriptEngine[] elements = new JavaScriptEngine[ scriptables.length ];
+                for (int i = 0; i < elements.length; i++) {
+                    elements[ i ] = (JavaScriptEngine) toScriptable( scriptables[ i ] );
+                }
+                ElementArray result = ElementArray.newElementArray( this );
+                result.initialize( elements );
+                return result;
+            } finally {
+                exitContextIfNeeded( enteredContext );
             }
-            ElementArray result = ElementArray.newElementArray( this );
-            result.initialize( elements );
-            return result;
         }
 
     }
